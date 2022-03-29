@@ -1,0 +1,7 @@
+A cycle family is an equivalence class of cycles of the same length, consisting of a designated node r (highest given a certain order), the node / edge opposite of it and the shortest paths to this node (a node on the edge) through nodes smaller than r (given the order).
+
+With this construction, for a cycle C of type (r,p,y,q), \forall n \in V(C') \in \mathcal{F}(C): n \in V_{r}.
+
+In order to calculate the number of cycles of a cycle family \mathcal{F}(C), consider the graph D_{r} = (V_{r}, U_{r}) with U_{r} the inversion of the directed edges along shortest paths in G from r only going through nodes V_{r}. By construction, this is a directed graph with paths pointing towards r, where every directed path (from x \in V_{r} to r) is a shortest path in G. 
+
+The list of paths (from x to r) can be constructed via a DFS, appending new nodes to shortest paths already calculated. The number of graphs in the respective cycle family now is \sum \Psi_{r}(p) * \Psi_{r}(q), with the summation running over all relevant prototypes (r,p,y,q), with \Psi_{r}(x) being the number of shortest paths from x to r in V_{r}.

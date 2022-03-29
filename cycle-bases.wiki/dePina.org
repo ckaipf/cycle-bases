@@ -1,0 +1,57 @@
+* Background
+
+The dePina MCB algorithm was originally based on a number of auxiliary sets that extended the non-spanning tree edges through direct sums of diagonal sets (if visualized as an upper triangle matrix, sucessively constructing the rows), based on whether the entry above (same column, row before) shared an even or odd number of edges with a (fixed) minimal circle, containing an odd number of edges with the respective diagonal entry. 
+
+Thus, the auxiliary vectors are successively constructed, which have an influence on the cycles chosen for each node not in the spanning tree. By construction these were linearly independent an minimal, thus yielding an MCB. 
+
+A more algebraic / simpler interpretation was given by Kavitha, Mehlhorn, Michail and Paluch in 2004. It considered cycles via coordinates in the vector space of non-spanning tree edges, representing cycles as fundamental cycles of these and the spanning tree. The 'diagonal entries' mentioned above are called witnesses of the cycles shown to be in the MCB. 
+
+Using this representation, necessary changes to successive witnesses are determined via an inner product, namely whenever the witness candidates are not orthogonal to the cycles in the partial MCB. 
+This will be elaborate on more below.
+
+* Motivation
+The motivation for dePina (in the case of the course this toolkit was developed in), lies in performance reasons. To construct a candidate set, in the 'classical' approach, we would consider cycle families and the prototypical cycles (representatives of cycle families as equivalent classes). This would construct a polynomial set of candidate cycles.
+
+However, instead of choosing cycles from these candidate cycles, we were interested in an alternative, generic approach for constructing cycle bases explicitly. Starting from a subset of a MCB (< |E| - |V| + 1), the goal was to find vectors that extended M as a subset of a MCB.
+
+In the strict form this could be achieved by having these vectors s be orthogonal to M (guaranteeing they would be linearly independent). In a more relaxed form the requirement was to find a cycle C not orthogonal to s, with s orthogonal to M. With this requirement there would be a non-empty projection on s, and through this it would have a component orthogonal to M, guaranteeing linear independence. This relaxation motivates the auxiliary vectors (witnesses), making the orthogonality to the base an 'indirect' criterion.
+
+The cycles chosen from the candidate set thus need to be the shortest cycles orthogonal to M (the partial cycle basis).
+This method is more algebraic and generic, but not more general, since it only works on some matroids (needs the notion of orthogonality).
+
+* Implementation
+The implementation of dePina is based on the following algorithm:
+
+#+BEGIN_SRC latex
+for i=1 to N
+  S_{i} \leftarrow \{e_{i}\}
+for k=1 to N
+  Find a shortest circle C_{k} non-orthogonal to S_{k}
+  For i=k+1 to N
+    If C_{k} is not orthogonal to S_{i}
+      S_{i} \rightarrow S_{i} - scalingFactor * S_{k}
+
+Output: \{C_{1},...,C_{N}\}
+#+END_SRC
+
+This algorithm is based on the invariant that $C_{i}$ and $S_{j+1}$ are orthogonal for all i, $1 \leq i \leq j \leq N$.
+
+* Orthogonality
+
+dePinas algorithm is based on the orthogonality of the auxiliary vectors and the vectors of the (partial) cycle basis. In the original form of the algorithm, cycles are chosen for the cycle basis that share an odd number of edges with the corresponding auxiliary vector, and subsequent vectors are modified if they share an odd number of edges with the cycle. IN the algebraic form of the algorithm this is expressed by non-orthogonality, over GF2, i.e. if the number of indices with common non-zero entries is odd. 
+
+Since the algorithms within this toolkit are generalized to work with any prime field or $\mathbb{Z}$, the notion of non-orthogonality is adapted. The orthogonalization instead (of adding non-zero components to a zero component) subtract a multiple of the vector to orthogonalize with from the vector to orthogonalize, to make the first non-zero vector zero. This is analogous to the Gram-Schmidt orthonormalization process. 
+
+Sucessive auxiliary vectors for the auxiliary vector corresponding to the 'current cycle' (the cycle to add to the partial MCB) are orthogonalized (wrt. the current cycle), so that successive cycle candidates are restricted to not being orthogonal to the modified auxiliary vector. This establishes the invariant that $C_{i}$ and $S_{j+1}$ are orthogonal for all i, $1 \leq i \leq j \leq N$.
+
+* Correctness of the algorithm
+The algorithm yields a linear independent set of cycles since $C_{i}$ is not orthogonal to $S_{i}$, but is to all $S_{j}, i < j$. Since N is the dimension of the cycle space of the Kirchhoff base, this is a basis of the cycle space of the graph.
+The basis is also minimal, since if it isn't, then the following holds:
+Fix a basis B and let $C_{i+1}$ be the first cycle not in this basis. Since B is a basis, there is a representation of $C_{i+1}$ by cycles in B. With $C_{i+1}$ not orthogonal to $S_{i+1}$, one of them can't be orthogonal to $S_{i+1}$ either. By construction however, $C_{i+1}$ is the shortest cycle not orthogonal to $S_{i+1}$. This is contradicted by Steinitz' exchange theorem.
+
+* Open problems
+The current implementation of the dePina algorithm can be improved in (at least) two ways:
+\begin{enumeration}
+\item find cycle is non-optimal implemented
+\item init over all edges, only non-spanning-tree edges necessary
+\end{enumeration}

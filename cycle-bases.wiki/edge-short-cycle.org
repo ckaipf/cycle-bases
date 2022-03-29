@@ -1,0 +1,7 @@
+An edge-short cycle is a cycle 'that cannot incorporate a short-cut'. This is \forall e=(x,y) \in C edge in C:
+
+If the number of edges in the cycle (|C|) is odd: \exists x \in V(C) s.t. C=P_{xp} \oplus P_{xq} \oplus (p,q), with P_{xp},P_{xq} shortest paths in G (|P_{xp}|=d_{G}(x,p), d distance function).
+
+If the number of edges in the cycle (|C|) is even: \exists f=(u,v) \in E(C) s.t. C=P_{pu} \oplus P_{qv} \oplus (u,v)
+ \oplus (p,q), with P_{xp},P_{xq} shortest paths in G (|P_{xp}|=d_{G}(x,p), d distance function) and C being [[isometric]].
+

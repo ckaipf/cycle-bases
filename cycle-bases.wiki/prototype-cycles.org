@@ -1,0 +1,15 @@
+Prototype cycles are used as representatives of a [[cycle family]] (i.e. they also belong to exactly one cycle family).
+They are distinct cycles of a cycle family given a fixed order of the nodes of the graph.
+
+Before sketching the algorithm, let V_{r} be the nodes to which a shortest path from r exists that only passes through nodes of lower order.
+
+Prototype cycles can be determined through the following algorithm:
+- in ascending order, calculate V_{r}, through calculating Dijkstra on G_{1,..,r} in order to calculate V_{r}
+- calculate the shortest path from r to t \forall t \in V_{r} \forall r
+- \forall y \in V_{r}, z adjacent to y:
+  - if d(r,z) + w(z,y) = d(r,y): add z to to the nodes in the shortest path from r to y
+  - else if d(r,z) \neq d(r,y)+w(z,y) \wedge z < y \wedge (P(r,y) \cap P(r,z) = {r}): found the (odd) prototype P(r,y) \oplus P(r,z) \oplus (z,y)
+- for p,q \in S: P(r,p) \cap P(r,q) = {r} (i.e. paths from r to p and q that don't cross), identify P(r,p) \oplus P(r,q) \oplus (p,y,q) as (even) prototypes.
+
+This (polynomial) algorithm identifies one representative cycle for every cycle family.
+
