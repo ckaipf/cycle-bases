@@ -16,11 +16,13 @@ import           Control.Applicative
 import qualified Data.List           as L
 import           Data.Semigroup
 import qualified Data.Set            as S
+import Data.Vector (Vector, (!))
 
 data WPP = WPP { weight :: Weight, parentPointer :: Int } deriving (Read, Show, Eq)
 
 instance Num WPP where
   x + y = WPP (weight x + weight y) (parentPointer y)
+
 
 instance Ord WPP where
   min x y = if weight x < weight y then x else y
@@ -46,10 +48,11 @@ floydWarshall g = L.foldl' f (initialize g) $ (S.toList . G.vertices) g
   where f d v = nestedZipWith (<>) d d'
           where d' = outerProduct (liftA2 (+)) (map (!! v) d) (d!!v)
 
-shortestPath :: Int -> Int -> [[Maybe WPP]] -> [Int]
+shortestPath :: Int -> Int -> Vector (Vector (Maybe WPP)) -> [Int]
 shortestPath s t d = go [] t
-  where u = d!!s
+  where u = d ! s
         go acc v = if s == v then v:acc
-                   else let in case u!!v of
+                   else let in case u ! v of
                                  Nothing -> s:v:acc
                                  Just b -> go (v:acc) (parentPointer b)
+

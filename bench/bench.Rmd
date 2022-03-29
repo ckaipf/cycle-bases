@@ -1,0 +1,40 @@
+---
+title: "cycle-bases-benchmark"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+
+# stack bench --benchmark-arguments "--csv ./bench/bench.csv"
+dat <- read.table("bench.csv", header = T, sep = ",")
+```
+
+## benchmark
+
+```{r bench, echo=FALSE}
+
+dat %>% 
+  separate(col = Name, sep = "/", into = c("f", "n")) %>%
+  mutate(norm_mean = Mean) %>%
+  ggplot(aes(x = as.numeric(n), y = as.numeric(norm_mean))) +
+  geom_point(aes(color = f))
+
+
+```
+
+
+```{r bench2, echo=FALSE}
+
+dat %>% 
+  separate(col = Name, sep = "/", into = c("f", "n")) %>%
+  mutate(norm_mean = Mean) %>%
+  ggplot(aes(x = as.numeric(n), y = as.numeric(norm_mean))) +
+  geom_area(aes(colour = f, fill= f), position = 'stack')   
+
+```

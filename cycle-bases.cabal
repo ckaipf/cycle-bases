@@ -2,12 +2,12 @@ name:                cycle-bases
 version:             0.1.0.0
 -- synopsis:
 -- description:
-homepage:            https://github.com/ckaipf/cycle-bases#readme
+homepage:            https://github.com/camillkaipf/cycle-bases#readme
 license:             BSD3
 -- license-file:        LICENSE
-author:              Simon Johanning, Camill Kaipf
+author:              Simon Johanning, Kolja Eckert, Alexander Heese, Camill Kaipf
 maintainer:          camill.kaipf@gmail.com
-copyright:           2017 Johanning Kaipf
+copyright:           2017 Johanning Eckert Heese Kaipf
 category:            Web
 build-type:          Simple
 extra-source-files:  README.md
@@ -21,14 +21,13 @@ library
                      , Horton                     
                      , DePina
                      , FloydWarshall
-                     , TH
                    
   build-depends:       base >= 4.7 && < 5
                      , vector
                      , finite-field
                      , containers >= 0.5
                      , template-haskell >= 2.11
-                     , primes
+                     
   default-language:    Haskell2010
 
 --executable cycle-bases-exe
@@ -49,10 +48,24 @@ test-suite cycle-bases-test
                      , cycle-bases
                      , containers >= 0.5
                      , template-haskell >= 2.11
-                     , type-level-numbers
                     
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
+
+benchmark mainbench
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   bench
+  main-is:          MainBench.hs
+  build-depends:    base
+                  , vector
+                  , finite-field >= 0.9
+                  , cycle-bases
+                  , containers >= 0.5
+                  , template-haskell >= 2.11
+                  , criterion
+  ghc-options:      -Wall
+                    -O2
+  default-language: Haskell2010
 
 source-repository head
   type:     git
