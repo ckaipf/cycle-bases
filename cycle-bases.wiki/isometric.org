@@ -1,1 +1,0 @@
-A cycle C is called **isometric** when \forall x,y \in V(C): d_{G}(x,y)=d_{C}(x,y) (i.e. when at least one of the paths from x to y is a shortest path).
