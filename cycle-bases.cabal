@@ -4,10 +4,7 @@ version:             0.1.0.0
 -- description:
 homepage:            https://github.com/ckaipf/cycle-bases#readme
 license:             BSD3
--- license-file:        LICENSE
 author:              Simon Johanning, Camill Kaipf
-maintainer:          camill.kaipf@gmail.com
-copyright:           2017 Johanning Kaipf
 category:            Web
 build-type:          Simple
 extra-source-files:  README.md
@@ -56,4 +53,4 @@ test-suite cycle-bases-test
 
 source-repository head
   type:     git
-  location: https://github.com/camillkaipf/cycle-bases
+  location: https://github.com/ckaipf/cycle-bases
