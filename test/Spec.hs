@@ -36,9 +36,7 @@ main = do
       bs = map (\(p,(CF f)) -> (p, mcb dePina "undirected" f)) $ zip primes conversionFunctions
 
   mapM (\(p,b) -> do
-        putStrLn "\n"
-        print $ p
-        print $ b      
+        putStrLn $ "GF(" ++ show p ++ "): " ++ show b
       ) bs
 
   return ()
