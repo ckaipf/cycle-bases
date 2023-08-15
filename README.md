@@ -1,6 +1,6 @@
 # cycle-bases
 Toolkit for the study of graph cycle bases.
-Minimal cycle bases are calculated for an given graph.
+Minimal cycle bases are calculated for a given graph.
 The project goes back to Prof. Dr. Peter Stadler and Dr. Christian Höner zu Siederdissen and was part of the course [*Advanced methods of bioinformatics*](https://www.bioinf.uni-leipzig.de/teaching/currentClasses/class233.html).
 Currently implemented algorithms and functions: horton, edge-short-cycles, gauss, dijkstra and de-pina.
 Graph operations are generalized over all finite fields (prime fields).
