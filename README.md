@@ -1,48 +1,97 @@
 # cycle-bases
 
-Welcome to the **cycle-bases** toolkit for the study of graph cycle bases. This project aims to calculate minimal cycle bases for a given graph. Originally initiated by Prof. Dr. Peter Stadler and Dr. Christian Höner zu Siederdissen, this project was developed as part of the course "Advanced Methods of Bioinformatics." The toolkit includes several algorithms and functions, including horton, edge-short-cycles, gauss, dijkstra, and de-pina. Graph operations within the toolkit are generalized over all finite fields (prime fields). For more in-depth information, please refer to the project's wiki.
+A Haskell library for computing **minimum cycle bases** of weighted graphs. The linear algebra is generic over the coefficient field, so bases can be computed over any prime field GF(*p*) and, for de Pina's algorithm, over the rationals.
 
-**Authors**: Simon Johanning and Camill Kaipf
+## Algorithms
+
+| Module | Description |
+| --- | --- |
+| `Horton` | Horton's algorithm: builds a candidate set of cycles and selects linearly independent ones in order of increasing weight. |
+| `DePina` | De Pina's algorithm: builds the basis incrementally, using auxiliary vectors that are kept orthogonal to the cycles found so far. |
+| `EdgeShort` | Edge-short cycles, formed by an edge and the shortest paths from both of its endpoints to a common vertex; Horton's candidate set. |
+| `FloydWarshall` | All-pairs shortest paths, computed algebraically after Fineman and Robinson (2011). |
+| `Gauss` | Gaussian elimination for extracting a linearly independent subset of vectors. |
+| `Graph` | Graph, edge, subgraph and cycle types, with conversion to and from incidence vectors. |
+| `TH` | Template Haskell helpers that generate conversion functions for many prime fields at once. |
+
+## Getting started
+
+### Requirements
+
+- [Stack](https://docs.haskellstack.org/). The project uses the `lts-24.60` snapshot (GHC 9.10); Stack installs the matching compiler automatically.
+- Alternatively, open the repository in the included [dev container](.devcontainer/), which provides Stack, the Haskell language server extension for VS Code, and a persistent build cache.
+
+### Build and test
+
+```bash
+stack build
+stack test
+```
+
+The test suite runs de Pina's algorithm on `test/example3` over the first 40 prime fields and prints the basis found for each.
 
 ## Usage
 
-To use the **cycle-bases** toolkit, follow these steps:
+Build a graph from an adjacency list and pass a function that maps integers into the field to compute over:
 
-1. Install [Stack](https://docs.haskellstack.org/en/stable/README/), a Haskell build tool.
+```haskell
+{-# LANGUAGE DataKinds #-}
+import qualified Data.Vector                 as V
+import           Data.FiniteField.PrimeField (PrimeField)
+import           DePina                      (dePina)
+import           Graph
+import           Horton                      (horton)
 
-2. Read the `test/Spec.hs` file, which includes the test execution details.
+-- A square 0-1-3-2 with the chord 2 -> 1; edges are Edge tail head label weight.
+g :: Graph
+g = fromAdjacencyList $ V.fromList
+  [ [Edge 0 1 1 1, Edge 0 2 2 1]
+  , [Edge 1 3 3 1]
+  , [Edge 2 3 4 1, Edge 2 1 5 1]
+  ]
 
-3. Run the tests using Stack:
+gf2 :: Integer -> PrimeField 2
+gf2 = fromInteger
 
-   ```bash
-   stack test
-   ```
+main :: IO ()
+main = do
+  print (dePina g gf2)  -- [([3,4,5]),([1,2,5])]
+  print (horton g gf2)  -- [([-5,-2,1]),([-5,-3,4])]
+```
 
-## Input Format
+Cycles are printed as the labels of their edges. In Horton's output, a negative label marks an edge traversed against its direction.
 
-The toolkit assumes graphs in a specific format:
+## Input format
 
-- Graphs are imported from an adjacency list.
-- Each entry in the adjacency list contains a 4-tuple `(tail, head, edge, weight)`.
-- The edge label (integer) corresponds to the unnested adjacency list, with enumeration starting from 1.
-- All graphs are treated as directed graphs with unique edges.
+Graphs are read from a plain-text adjacency list, one line per vertex. Each line holds a sequence of edges, each written as four integers:
 
-Check the `test/` directory for example input files.
+```
+tail head label weight
+```
 
-## Algorithms and Functions
+- Edge labels are integers, numbered from 1 in the order the edges appear in the file.
+- Graphs are directed and every edge must be unique.
 
-The **cycle-bases** toolkit provides several algorithms and functions:
+For example, `test/example1` describes a graph with seven unit-weight edges:
 
-- **horton**: Implementation of the Horton's algorithm.
-- **edge-short-cycles**: Algorithm for detecting short cycles based on edges.
-- **gauss**: Gauss elimination algorithm for cycle detection.
-- **dijkstra**: Dijkstra's algorithm for cycle detection.
-- **de-pina**: De Pina's algorithm for finding fundamental cycles in planar graphs.
+```
+0 1 1 1
+1 2 2 1 1 3 3 1
+2 3 4 1
+3 4 5 1 3 5 6 1
+4 5 7 1
+```
 
-## Generalization
-
-Graph operations within the toolkit are generalized over all finite fields, specifically prime fields.
+More examples are in [`test/`](test/).
 
 ## Documentation
 
-For more detailed information about individual algorithms, usage examples, and further details, please refer to the [project's wiki](https://github.com/ckaipf/cycle-bases/wiki).
+See the [project wiki](https://github.com/ckaipf/cycle-bases/wiki) for background on the algorithms and further examples.
+
+## Background
+
+The project was started by Prof. Dr. Peter Stadler and Dr. Christian Höner zu Siederdissen and developed as part of the course *Advanced Methods of Bioinformatics*.
+
+## Authors
+
+Simon Johanning and Camill Kaipf
