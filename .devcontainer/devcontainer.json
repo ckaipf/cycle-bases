@@ -1,0 +1,29 @@
+{
+  "name": "cycle-bases",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+
+  "mounts": [
+    "source=cycle-bases-stack,target=/home/vscode/.stack,type=volume",
+    "source=cycle-bases-claude,target=/home/vscode/.claude,type=volume"
+  ],
+
+  // Named volumes are created root-owned. GHC and the dependencies are installed
+  // into the ~/.stack volume, so this runs per container rather than in the image.
+  "postCreateCommand": "sudo chown vscode:vscode /home/vscode/.stack /home/vscode/.claude && stack setup && stack build --test --only-dependencies",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "haskell.haskell",
+        "anthropic.claude-code"
+      ]
+    }
+  }
+}
