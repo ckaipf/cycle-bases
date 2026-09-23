@@ -30,6 +30,14 @@ stack test
 
 The test suite runs de Pina's algorithm on `test/example3` over the first 40 prime fields and prints the basis found for each.
 
+### Formatting
+
+Code is formatted with [Fourmolu](https://fourmolu.github.io/) using the settings in [`fourmolu.yaml`](fourmolu.yaml). The dev container installs it and formats Haskell files on save; from the command line, run:
+
+```bash
+fourmolu -i src test
+```
+
 ## Usage
 
 Build a graph from an adjacency list and pass a function that maps integers into the field to compute over:

@@ -20,6 +20,15 @@
 
   "customizations": {
     "vscode": {
+      "settings": {
+        "haskell.formattingProvider": "fourmolu",
+        // Use the fourmolu binary installed in the image, not the one built into
+        // the language server, so the editor and the command line agree.
+        "haskell.plugin.fourmolu.config.external": true,
+        "[haskell]": {
+          "editor.formatOnSave": true
+        }
+      },
       "extensions": [
         "haskell.haskell",
         "anthropic.claude-code"

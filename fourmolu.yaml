@@ -1,0 +1,5 @@
+# Fourmolu formatting settings, see https://fourmolu.github.io/config/
+# Format all sources with: fourmolu -i src test
+indentation: 2
+column-limit: 100
+indent-wheres: true
