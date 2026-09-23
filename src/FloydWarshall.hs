@@ -1,23 +1,22 @@
-module FloydWarshall
-  (
-    floydWarshall,
-{- returns DP matrix -}
+module FloydWarshall (
+  floydWarshall,
+  {- returns DP matrix -}
 
-    shortestPath
-{- backtracing of DP matrix-}
-  ) where
+  shortestPath,
+  {- backtracing of DP matrix-}
+) where
 
 {- Algebraic Floyd–Warshall from Jeremy T. Fineman and Eric Robinson (Graph G.gorithms in the Language of Linear G.gebra. 2011, 45-58)
 Positiv and negative edge weights (no negative cycles) O(N^3) -}
 
-import           Graph (Edge, Graph, Weight)
+import Control.Applicative
+import qualified Data.List as L
+import Data.Semigroup
+import qualified Data.Set as S
+import Graph (Edge, Graph, Weight)
 import qualified Graph as G
-import           Control.Applicative
-import qualified Data.List           as L
-import           Data.Semigroup
-import qualified Data.Set            as S
 
-data WPP = WPP { weight :: Weight, parentPointer :: Int } deriving (Read, Show, Eq)
+data WPP = WPP {weight :: Weight, parentPointer :: Int} deriving (Read, Show, Eq)
 
 -- path extension: add the weights, keep the parent pointer of the second path
 extend :: WPP -> WPP -> WPP
@@ -31,24 +30,32 @@ nestedZipWith :: (a -> a -> a) -> [[a]] -> [[a]] -> [[a]]
 nestedZipWith = zipWith . zipWith
 
 outerProduct :: (a -> a -> a) -> [a] -> [a] -> [[a]]
-outerProduct f v u = [[ f x y | y <- u ] | x <- v ]
+outerProduct f v u = [[f x y | y <- u] | x <- v]
 
 initialize :: Graph -> [[Maybe WPP]]
 initialize g = map (map f) a
-  where a = G.toAdjacencyMatrix g
-        f x = case x of
-                Nothing -> Nothing
-                Just x  -> Just $ WPP (G.weight x) (G.tail x)
+  where
+    a = G.toAdjacencyMatrix g
+    f x = case x of
+      Nothing -> Nothing
+      Just x -> Just $ WPP (G.weight x) (G.tail x)
 
 floydWarshall :: Graph -> [[Maybe WPP]]
 floydWarshall g = L.foldl' f (initialize g) $ (S.toList . G.vertices) g
-  where f d v = nestedZipWith (<>) d d'
-          where d' = outerProduct (liftA2 extend) (map (!! v) d) (d!!v)
+  where
+    f d v = nestedZipWith (<>) d d'
+      where
+        d' = outerProduct (liftA2 extend) (map (!! v) d) (d !! v)
 
 shortestPath :: Int -> Int -> [[Maybe WPP]] -> [Int]
 shortestPath s t d = go [] t
-  where u = d!!s
-        go acc v = if s == v then v:acc
-                   else let in case u!!v of
-                                 Nothing -> s:v:acc
-                                 Just b -> go (v:acc) (parentPointer b)
+  where
+    u = d !! s
+    go acc v =
+      if s == v
+        then v : acc
+        else
+          let
+           in case u !! v of
+                Nothing -> s : v : acc
+                Just b -> go (v : acc) (parentPointer b)

@@ -1,33 +1,32 @@
-{-# LANGUAGE DataKinds, TemplateHaskell, ExistentialQuantification #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module TH (
-    ConversionFunctions (..),
-    
-    primes,
-    firstNthPrimes,
-    
-    declareConversionFunctions,
-    conversionFunctionsList
-    
-    ) where
+  ConversionFunctions (..),
+  primes,
+  firstNthPrimes,
+  declareConversionFunctions,
+  conversionFunctionsList,
+) where
 
-import Language.Haskell.TH
 import Data.FiniteField
-import DePina
 import qualified Data.Numbers.Primes as P
+import DePina
+import Language.Haskell.TH
 
-data ConversionFunctions = forall p. (Orthogonalizeable p) => CF (Integer -> p) 
-  
+data ConversionFunctions = forall p. (Orthogonalizeable p) => CF (Integer -> p)
+
 convFunction :: Integer -> ExpQ
-convFunction p = do 
-    [e| CF ((\x -> fromInteger x ) :: Integer -> $(primeField p)) |]
+convFunction p = do
+  [e|CF ((\x -> fromInteger x) :: Integer -> $(primeField p))|]
 
 mkConvFunctionDec :: Integer -> DecQ
 mkConvFunctionDec p = do
-    cF <- convFunction p
-    let name = mkName $ "convFunction" ++ show p
-    return $ FunD name [Clause [] (NormalB cF) []]
-   
+  cF <- convFunction p
+  let name = mkName $ "convFunction" ++ show p
+  return $ FunD name [Clause [] (NormalB cF) []]
+
 conversionFunctionsList :: [Integer] -> Q Exp
 conversionFunctionsList x = return $ ListE $ map (\d -> VarE (mkName ("convFunction" ++ show d))) x
 
