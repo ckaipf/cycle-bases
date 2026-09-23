@@ -11,6 +11,7 @@ extra-source-files:  README.md
                      test/example1
                      test/example2
                      test/example3
+                     test/example4
 
 library
   hs-source-dirs:      src

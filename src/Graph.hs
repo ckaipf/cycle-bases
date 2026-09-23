@@ -106,7 +106,8 @@ instance Show (Cycle) where
   show a = (show . subgraph) a
 
 length :: Cycle -> Weight
-length c = esSum $ edgeIndicesToEdges (supergraph $ subgraph c) $ edgeIndices $ subgraph c
+-- edges traversed against their direction carry negated labels, so look them up by absolute value
+length c = esSum $ edgeIndicesToEdges (supergraph $ subgraph c) $ I.map abs $ edgeIndices $ subgraph c
 
 mapOverEdgeLabels :: (Int -> Int) -> Cycle -> Cycle
 mapOverEdgeLabels f c = Cycle (Subgraph (supergraph $ subgraph c) is')
