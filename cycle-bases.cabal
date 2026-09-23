@@ -1,40 +1,33 @@
+cabal-version:       2.2
 name:                cycle-bases
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis:            Minimal cycle bases of graphs over prime fields
 homepage:            https://github.com/ckaipf/cycle-bases#readme
-license:             BSD3
+license:             BSD-3-Clause
 author:              Simon Johanning, Camill Kaipf
-category:            Web
+category:            Math
 build-type:          Simple
 extra-source-files:  README.md
-cabal-version:       >=1.10
+                     test/example1
+                     test/example2
+                     test/example3
 
 library
   hs-source-dirs:      src
   exposed-modules:     Gauss
                      , EdgeShort
                      , Graph
-                     , Horton                     
+                     , Horton
                      , DePina
                      , FloydWarshall
                      , TH
-                   
   build-depends:       base >= 4.7 && < 5
                      , vector
-                     , finite-field
+                     , finite-field >= 0.10
                      , containers >= 0.5
                      , template-haskell >= 2.11
                      , primes
   default-language:    Haskell2010
-
---executable cycle-bases-exe
---  hs-source-dirs:      app
---  main-is:             Main.hs
---  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
---  build-depends:       base
---                     , cycle-bases
--- default-language:    Haskell2010
 
 test-suite cycle-bases-test
   type:                exitcode-stdio-1.0
@@ -42,12 +35,9 @@ test-suite cycle-bases-test
   main-is:             Spec.hs
   build-depends:       base
                      , vector
-                     , finite-field >= 0.9
+                     , finite-field >= 0.10
                      , cycle-bases
-                     , containers >= 0.5
                      , template-haskell >= 2.11
-                     , type-level-numbers
-                    
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 
