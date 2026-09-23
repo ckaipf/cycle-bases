@@ -115,7 +115,7 @@ mapOverEdgeLabels f c = Cycle (Subgraph (supergraph $ subgraph c) is')
   where is' = I.map f $ edgeIndices $ subgraph c
 
 fromVerticesList :: Vector (Vector (Maybe Edge)) -> [Int] -> Set Edge
-fromVerticesList a vs = S.fromList $ map f $ tuplify $ vs ++ [P.head vs]
+fromVerticesList a vs@(v0:_) = S.fromList $ map f $ tuplify $ vs ++ [v0]
      where tuplify (x:y:[]) = (x,y):[]
            tuplify (x:y:ys) = (x,y):(tuplify (y:ys))
            f (v,u) = case ((a!u)!v) of

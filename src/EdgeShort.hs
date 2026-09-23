@@ -57,7 +57,7 @@ zipConcat [] [] = []
 zipConcat (p:ps) (q:qs)
     -- when the paths only share one common node, concate the paths (module the shared node, and with one path in reverse)
     -- and cons it with other legit paths
-  | checkPaths p q = (p ++ (tail $ reverse q)) : zipConcat ps qs
+  | checkPaths p q = (p ++ (drop 1 $ reverse q)) : zipConcat ps qs
     -- if they share more than one node, ignore the paths
   | otherwise = zipConcat ps qs
 

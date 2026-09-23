@@ -19,14 +19,13 @@ import qualified Data.Set            as S
 
 data WPP = WPP { weight :: Weight, parentPointer :: Int } deriving (Read, Show, Eq)
 
-instance Num WPP where
-  x + y = WPP (weight x + weight y) (parentPointer y)
+-- path extension: add the weights, keep the parent pointer of the second path
+extend :: WPP -> WPP -> WPP
+extend x y = WPP (weight x + weight y) (parentPointer y)
 
-instance Ord WPP where
-  min x y = if weight x < weight y then x else y
-
+-- the lighter path, the second one on ties
 instance Semigroup WPP where
-  x <> y = min x y
+  x <> y = if weight x < weight y then x else y
 
 nestedZipWith :: (a -> a -> a) -> [[a]] -> [[a]] -> [[a]]
 nestedZipWith = zipWith . zipWith
@@ -44,7 +43,7 @@ initialize g = map (map f) a
 floydWarshall :: Graph -> [[Maybe WPP]]
 floydWarshall g = L.foldl' f (initialize g) $ (S.toList . G.vertices) g
   where f d v = nestedZipWith (<>) d d'
-          where d' = outerProduct (liftA2 (+)) (map (!! v) d) (d!!v)
+          where d' = outerProduct (liftA2 extend) (map (!! v) d) (d!!v)
 
 shortestPath :: Int -> Int -> [[Maybe WPP]] -> [Int]
 shortestPath s t d = go [] t

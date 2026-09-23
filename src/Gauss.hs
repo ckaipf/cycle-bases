@@ -72,6 +72,10 @@ instance (Num a) => Num (Vector a) where
   x + y = V.zipWith (+) x y
   x - y = V.zipWith (-) x y
   abs x = V.map (abs) x
+  x * y = V.zipWith (*) x y
+  signum x = V.map signum x
+  negate x = V.map negate x
+  fromInteger _ = error "Gauss: fromInteger is undefined for vectors"
 
 {-
   Input: A scaling factor and a vector to scale
