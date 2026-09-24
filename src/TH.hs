@@ -15,7 +15,7 @@ import qualified Data.Numbers.Primes as P
 import DePina
 import Language.Haskell.TH
 
-data ConversionFunctions = forall p. (Orthogonalizeable p) => CF (Integer -> p)
+data ConversionFunctions = forall p. (Orthogonalizable p) => CF (Integer -> p)
 
 convFunction :: Integer -> ExpQ
 convFunction p = do

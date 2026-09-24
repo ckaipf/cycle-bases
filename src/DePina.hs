@@ -68,16 +68,16 @@ findNonOrthogonalCycle s cycles = findAndDelete cycles [] s
       -- (i.e. the cycles considered before and the cycles not yet considered)
       | otherwise = (Just c, (acc ++ cs))
 
--- For an instance of type a to be an Orthogonalizeable, it needs to support the orthogonalize class method
-class (Num a, Ord a) => Orthogonalizeable a where
+-- For an instance of type a to be an Orthogonalizable, it needs to support the orthogonalize class method
+class (Num a, Ord a) => Orthogonalizable a where
   orthogonalize :: Vector a -> Vector a -> Vector a -> Vector a
 
 -- Making Ratio Integer orthogonalizable by subtracting the non-orthogonal components from it
-instance Orthogonalizeable (Ratio Integer) where
+instance Orthogonalizable (Ratio Integer) where
   orthogonalize s c s' = s' - scale ((dot s' c) / (dot s c)) s
 
 -- Making a prime field orthogonalizable by subtracting the non-orthogonal components from it
-instance (KnownNat p) => Orthogonalizeable (PrimeField p) where
+instance (KnownNat p) => Orthogonalizable (PrimeField p) where
   orthogonalize s c s' = s' - scale ((dot s' c) / (dot s c)) s
 
 {-
@@ -103,7 +103,7 @@ auxiliaryVectors g =
   Function to derive a minimum cycle basis from a graph using de Pina's algorithm.
   Will find an MCB with orthogonal cycles, using a set of (dynamic) auxiliary vectors
 -}
-dePina :: (Orthogonalizeable a) => Graph -> (Integer -> a) -> [Cycle]
+dePina :: (Orthogonalizable a) => Graph -> (Integer -> a) -> [Cycle]
 -- will return the cycles found through recursion of go
 dePina g f = map (G.Cycle . (G.fromIncidenceVector g)) $ go [] cs ss
   where
