@@ -21,14 +21,14 @@ class
   Reducible a
   where
   -- a reduceVector class method uses a vector to reduce a(nother) vector and returns the reduced vector
-  -- Within this context it is used to subtract linearly dependent component of the vector,
+  -- Within this context it is used to subtract the linearly dependent components of the vector,
   -- based on the vector whose non-zero components should be reduced from the vector to reduce
   reduceVector :: Vector a -> Vector a -> Vector a
 
 -- Making a prime field a reducible class by reducing the first non-zero component of the reduction vector
 -- from the vector to reduce
 instance (KnownNat p) => Reducible (PrimeField p) where
-  -- reduce u by v through adding the k-multiple of it that the first non-zero index of v (i.e. i) vanishes in u
+  -- reduce u by v by adding the k-multiple of v, so that the entry at the first non-zero index of v (i.e. i) vanishes in u
   reduceVector u v = u + k `scale` v
     where
       -- find the first non-zero index (if exists) of v
@@ -42,7 +42,7 @@ instance (KnownNat p) => Reducible (PrimeField p) where
 -- Making an integer a reducible class by subtracting the scaled first non-zero component of the vector
 -- to reduce with from the vector to reduce
 instance Reducible Integer where
-  -- reduce u by v through
+  -- reduce u by v
   reduceVector u v
     -- if the component in u where v has its first non-zero component is 0, nothing needs to be done
     | u ! i == 0 = u
@@ -59,7 +59,7 @@ instance Reducible Integer where
           Just x -> x
       -- the least common multiple of the components where v has its first non-zero component
       m = lcm (u ! i) (v ! i)
-      -- the sign for the reduction operation, making sure that the scaled qunatities at i cancel out
+      -- the sign for the reduction operation, making sure that the scaled quantities at i cancel out
       s =
         if signum (u ! i) == signum (v ! i)
           -- if the sign of u and v at i is the same, they need to oppose
@@ -68,7 +68,7 @@ instance Reducible Integer where
           else 1
 
 {-
-  Functionality for simple vector arithmetics, applying the operator to each vector entry
+  Functionality for simple vector arithmetic, applying the operator to each vector entry
 -}
 instance (Num a) => Num (Vector a) where
   x + y = V.zipWith (+) x y
@@ -92,8 +92,8 @@ scale e v = V.map (* e) v
   Input: a (partial) base and a vector to reduce
   Output: the reduction of the vector to reduce
 
-  Function to successively reducing a vector by subtracting linearly dependent entries of the partial base from the vector.
-  Implements a variant of Gauss, where the partial base (preferably in upper echolon form attempts to subtract its
+  Function to successively reduce a vector by subtracting linearly dependent entries of the partial base from the vector.
+  Implements a variant of Gauss, where the partial base (preferably in upper echelon form) attempts to subtract its
   share (as a projection) from the vector to reduce / the attempt to extend the base
 -}
 extendBase :: (Reducible a) => [Vector a] -> Vector a -> Vector a
@@ -105,7 +105,7 @@ extendBase base v = foldl' (reduceVector) v (sortBy absDescend base)
 
   Function to extract a linearly independent set ((partial) base) from a set of vectors
   Done by recursively attempting to represent vectors as linear combinations of the set of (earlier in the call stack)
-  provenly independent vectors.
+  provably independent vectors.
   Only vectors that can't be reduced to the 0-vector (i.e. written as linear combinations of the other vectors) are kept
   Basically exactly the same as extractBaseEnum, except that it doesn't keep track of the indices of the (reduced) vectors.
 -}
@@ -128,7 +128,7 @@ extractBase (v : base) = if V.all (== 0) v' then base' else v' : base'
 
   Function to filter out vectors that are linearly dependent.
   This is done by extending a partial base using a variant of the Gauss algorithm and filtering out all dependent vectors.
-  Dependent vectors will have been transformed in 0 vectors, since all dependent part have been subtracted.
+  Dependent vectors will have been transformed into 0 vectors, since all dependent parts have been subtracted.
   Basically exactly the same as extractBase, except for keeping track of the indices of the (reduced) vectors.
 -}
 extractBaseEnum :: (Reducible a) => [(Int, Vector a)] -> [(Int, Vector a)]
@@ -146,7 +146,7 @@ extractBaseEnum ((i, v) : base) = if V.all (== 0) v' then base' else ((i, v') : 
   Input: Two vectors to order
   Output: relationship between the vectors (as Ordering)
 
-  Derived the order between the two input vectors (as partial order)
+  Derives the order between the two input vectors (as partial order)
 -}
 absDescend :: (Ord a, Num a) => Vector a -> Vector a -> Ordering
 absDescend v u

@@ -3,11 +3,11 @@ module FloydWarshall (
   {- returns DP matrix -}
 
   shortestPath,
-  {- backtracing of DP matrix-}
+  {- backtracking of DP matrix -}
 ) where
 
-{- Algebraic Floyd–Warshall from Jeremy T. Fineman and Eric Robinson (Graph G.gorithms in the Language of Linear G.gebra. 2011, 45-58)
-Positiv and negative edge weights (no negative cycles) O(N^3) -}
+{- Algebraic Floyd–Warshall from Jeremy T. Fineman and Eric Robinson (Graph Algorithms in the Language of Linear Algebra. 2011, 45-58)
+Positive and negative edge weights (no negative cycles) O(N^3) -}
 
 import Control.Applicative
 import qualified Data.List as L

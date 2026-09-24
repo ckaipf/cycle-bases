@@ -32,5 +32,6 @@ horton g f =
     -- candidate set is transformed via the field map (as incidence vectors)
     map (V.map f . G.toIncidenceVector . G.subgraph) cs
   where
-    -- cycle candidate set derived by sorting the set of edgeShortCycles (EdgeShort.hs) in ascending length
+    -- cycle candidate set: the edgeShortCycles (EdgeShort.hs) sorted by descending length, since
+    -- extractBaseEnum works through the list from the end, so the lightest cycles are considered first
     cs = reverse . L.sortBy (comparing G.length) . S.toList $ edgeShortCycles g

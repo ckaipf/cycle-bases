@@ -45,7 +45,7 @@ isOrthogonal :: (Eq a, Num a) => Vector a -> Vector a -> Bool
 isOrthogonal v u = (dot v u) == 0
 
 {-
-  Input: The witness vector and the set of candidate cycles among whose to find a non-orthogonal one
+  Input: The witness vector and the set of candidate cycles among which to find a non-orthogonal one
   Output: The first cycle not orthogonal to the witness vector and all other cycles
 
   Function to find a cycle that is not orthogonal to the witness vector s provided (if any).
@@ -72,11 +72,11 @@ findNonOrthogonalCycle s cycles = findAndDelete cycles [] s
 class (Num a, Ord a) => Orthogonalizeable a where
   orthogonalize :: Vector a -> Vector a -> Vector a -> Vector a
 
--- Making a Ratio Integer an orthoganizable class by subtracting the non-orthogonal components from it
+-- Making Ratio Integer orthogonalizable by subtracting the non-orthogonal components from it
 instance Orthogonalizeable (Ratio Integer) where
   orthogonalize s c s' = s' - scale ((dot s' c) / (dot s c)) s
 
--- Making a prime field an orthoganizable class by subtracting the non-orthogonal components from it
+-- Making a prime field orthogonalizable by subtracting the non-orthogonal components from it
 instance (KnownNat p) => Orthogonalizeable (PrimeField p) where
   orthogonalize s c s' = s' - scale ((dot s' c) / (dot s c)) s
 
@@ -87,7 +87,7 @@ instance (KnownNat p) => Orthogonalizeable (PrimeField p) where
   Function to extract auxiliary vectors used for the orthogonality tests within dePina
 -}
 auxiliaryVectors :: (Num a) => Graph -> [Vector a]
--- construct a list of unit vectors and ... with the indices of the edges of the graph
+-- construct a list of unit vectors, one for each edge index of the graph
 auxiliaryVectors g =
   [ V.generate (length es) (\i -> if j == i then 1 else 0)
   | j <- L.sort . map (flip (-) 1 . G.index) $ es
@@ -97,11 +97,11 @@ auxiliaryVectors g =
     es = S.toList $ G.edges g
 
 {-
-  Input: A graph to derive a MCB from and a field map for VR coefficients
+  Input: A graph to derive an MCB from and a field map for VR coefficients
   Output: An MCB of the graph
 
-  Function to derive a minimal cycle base from a graph using dePinas algorithm.
-  Will find a MCB with orthogonal cycles, using a set of (dynamic) auxiliary vectors
+  Function to derive a minimum cycle basis from a graph using de Pina's algorithm.
+  Will find an MCB with orthogonal cycles, using a set of (dynamic) auxiliary vectors
 -}
 dePina :: (Orthogonalizeable a) => Graph -> (Integer -> a) -> [Cycle]
 -- will return the cycles found through recursion of go
@@ -116,7 +116,7 @@ dePina g f = map (G.Cycle . (G.fromIncidenceVector g)) $ go [] cs ss
       map ((V.map f) . G.toIncidenceVector . G.subgraph)
         $ L.sortBy (comparing G.length) . S.toList . edgeShortCycles
         $ g
-    -- recursion to orthogonize the vectors
+    -- recursion to orthogonalize the vectors
     go acc cs (s : ss)
       -- when the last auxiliary vector is about to be processed, return the new MCB
       | null ss = acc'
@@ -132,7 +132,7 @@ dePina g f = map (G.Cycle . (G.fromIncidenceVector g)) $ go [] cs ss
                     -- with the current auxiliary vector and (first) cycle not orthogonal to the current auxiliary vector
                     if not $ isOrthogonal c s'
                       then orthogonalize s c s'
-                      -- if its already orthogonal to the first non-orthorgonal cycle do nothing
+                      -- if it's already orthogonal to the first non-orthogonal cycle, do nothing
                       else s'
                 )
                 ss
@@ -141,5 +141,5 @@ dePina g f = map (G.Cycle . (G.fromIncidenceVector g)) $ go [] cs ss
         (c, cs', acc') = case findNonOrthogonalCycle s cs of
           -- if cycle set only contains cycles orthogonal to the auxiliary vector, there's nothing to do
           (Nothing, cs') -> (V.empty, cs', acc)
-          -- otherwise identify first non-orthorgonal cycle, remove it from the cycle set and add it to the accumulator (partial MCB)
+          -- otherwise identify first non-orthogonal cycle, remove it from the cycle set and add it to the accumulator (partial MCB)
           (Just x, cs') -> (x, cs', x : acc)

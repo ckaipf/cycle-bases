@@ -22,7 +22,7 @@ import qualified Graph as G
   Uses the WPP (weight parent-pointer) data structure (addition and comparison/order by weight, monoid operation by comparison).
 -}
 shortestPaths :: Graph -> [[[Int]]]
--- shortest path between x and y (based on WPP d) is saved in an array / a list of list
+-- shortest path between x and y (based on WPP d) is saved in an array / a list of lists
 -- based on the shortestPath recursion algorithm in FloydWarshall.hs
 shortestPaths g = [[F.shortestPath x y d | y <- vs] | x <- vs]
   where
@@ -55,7 +55,7 @@ zipConcat :: [[Int]] -> [[Int]] -> [[Int]]
 zipConcat [] [] = []
 -- when there is some actual work to do
 zipConcat (p : ps) (q : qs)
-  -- when the paths only share one common node, concate the paths (module the shared node, and with one path in reverse)
+  -- when the paths only share one common node, concatenate the paths (modulo the shared node, and with one path in reverse)
   -- and cons it with other legit paths
   | checkPaths p q = (p ++ (drop 1 $ reverse q)) : zipConcat ps qs
   -- if they share more than one node, ignore the paths
@@ -63,7 +63,7 @@ zipConcat (p : ps) (q : qs)
 
 {-
   Input: A set of edges and the array of WPP lists (shortest paths in FloydWarshall form)
-  Output: A list of the edgeShort cycles within the graph corrsponding to the input edge set as list of vertex index tuples (tail & head)
+  Output: A list of the edgeShort cycles within the graph corresponding to the input edge set as list of vertex index tuples (tail & head)
 
   Function to calculate the edgeShort cycles as list of tuples of vertex indices (for edges in a cycle)
 -}
@@ -96,7 +96,7 @@ edgeShortCycles g =
   where
     -- edges of the graph
     es = G.edges g
-    -- listified adjecency matrix
+    -- listified adjacency matrix
     a = V.fromList $ map V.fromList $ G.toAdjacencyMatrix g'
     -- inverted edges of the graph (reversed edges)
     es' = S.map G.inverse es
