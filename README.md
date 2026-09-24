@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/cycle-basis.svg" width="480" alt="A graph with seven vertices and eleven edges; the five cycles of its minimum cycle basis are filled in different colours">
+</p>
+
 # cycle-bases
 
 A Haskell library for computing **minimum cycle bases** of weighted graphs. The linear algebra is generic over the coefficient field, so bases can be computed over any prime field GF(*p*) and, for de Pina's algorithm, over the rationals.
